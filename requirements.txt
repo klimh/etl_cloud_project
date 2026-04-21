@@ -3,5 +3,6 @@ requests
 google-cloud-bigquery
 pyarrow
 python-dotenv
+pandera
 
 protobuf

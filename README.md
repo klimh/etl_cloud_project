@@ -1,26 +1,30 @@
-# ETL Pipeline to Google BigQuery
+# Big Data ETL Pipeline to Google BigQuery
 
-A lightweight, robust Data Engineering ETL (Extract, Transform, Load) pipeline implemented in Python. It extracts live data from a REST API, transforms and cleans it using `pandas`, and securely streams it into a Google BigQuery data warehouse.
+A robust Data Engineering ETL (Extract, Transform, Load) pipeline implemented in Python. It processes large-scale CSV data (such as offline weather or user action logs), validates it using rigorous schemas, and securely loads it into a highly-optimized Google BigQuery data warehouse.
+
+*Note: The original real-time API extraction pipeline using OpenWeatherMap is preserved in `api_v1_pipeline.py`.*
 
 ## Project Highlights
-- **Extract**: Fetches nested JSON log/data from an external REST API (OpenWeather).
-- **Transform**: Standardizes time dimensions, generates unique uuid keys, removes duplicates, and dynamically maps external payload structures to predefined BigQuery schemas.
-- **Load**: Securely authenticates with Google Cloud via Service Account credential file and appends new transaction records natively.
-- **Robustness**: Uses standard `logging`, `try-except` guardrails, and environment variable separation for config handling.
+- **Extract (Large-Scale Processing)**: Reads large CSV datasets (`raw_weather_logs.csv`) using Pandas chunking (`chunksize`), effectively managing memory during high-volume data ingestion.
+- **Transform & Data Validation**: Uses `pandera` to enforce strict data schemas. Invalid data (e.g., incorrect temperature types, missing critical fields) is intercepted, logged, and isolated to a dead-letter file (`error_logs.csv`), ensuring only clean data reaches the warehouse.
+- **Load & Optimization**: Securely streams valid chunks into BigQuery. The target table is **optimized** upon creation with **Time Partitioning** (by timestamp) and **Clustering** (by city) to significantly reduce query costs and increase analytical performance.
+- **Robustness**: Employs extensive `logging`, structured `try-except` guardrails, and environment variable separation for configuration handling.
 
 ## Tech Stack
 - **Language**: Python 3.x
 - **ETL Processing**: `pandas`, `pyarrow`
+- **Data Validation**: `pandera`
 - **Cloud Integration**: `google-cloud-bigquery`
 - **Platform**: Google Cloud Platform (Data Warehouse)
 
 ## Security & Best Practices
-- **No Hardcoded Credentials**: API Keys, Target IDs and paths are exclusively pulled from `.env`.
+- **No Hardcoded Credentials**: Target IDs and paths are pulled from `.env`.
 - **Service Account Identity**: Data streaming relies on `klucz_gcp.json` strictly excluded from version control via `.gitignore`.
-- **Modular Stages**: Separated `extract()`, `transform()`, and `load()` methods making the pipeline extremely scalable and easy to test.
+- **Error Handling**: Malformed data rows do not crash the pipeline but are elegantly skipped and logged for further analysis.
 
-## How to run
+## How to Run
 1. Set up a destination Dataset and Table in BigQuery.
 2. Install Python dependencies: `pip install -r requirements.txt`.
 3. Provide your `.env` (refer to `.env.example`).
-4. Execute: `python main.py`
+4. Generate the dummy dataset (simulating raw data): `python generate_data.py`
+5. Execute the ETL pipeline: `python main.py`
