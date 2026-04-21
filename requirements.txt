@@ -4,5 +4,6 @@ google-cloud-bigquery
 pyarrow
 python-dotenv
 pandera
+db-dtypes
 
 protobuf
