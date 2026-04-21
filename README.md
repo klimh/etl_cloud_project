@@ -8,7 +8,7 @@ A robust Data Engineering ETL (Extract, Transform, Load) pipeline implemented in
 - **Extract (Large-Scale Processing)**: Reads large CSV datasets (`raw_weather_logs.csv`) using Pandas chunking (`chunksize`), effectively managing memory during high-volume data ingestion.
 - **Transform & Data Validation**: Uses `pandera` to enforce strict data schemas. Invalid data (e.g., incorrect temperature types, missing critical fields) is intercepted, logged, and isolated to a dead-letter file (`error_logs.csv`), ensuring only clean data reaches the warehouse.
 - **Load & Optimization**: Securely streams valid chunks into BigQuery. The target table is **optimized** upon creation with **Time Partitioning** (by timestamp) and **Clustering** (by city) to significantly reduce query costs and increase analytical performance.
-- **Analyze**: Includes `analytics.py` script that connects back to BigQuery to run SQL aggregations (averages, max/min temperatures per city) and export a final business report.
+- **Analyze & Export**: Includes `analytics.py` script that connects back to BigQuery to run SQL aggregations (averages, max/min temperatures per city) and exports a final business report. The report is automatically pushed to a **Google Cloud Storage (GCS)** Data Lake bucket, demonstrating an end-to-end data lifecycle.
 - **Robustness**: Employs extensive `logging`, structured `try-except` guardrails, and environment variable separation for configuration handling.
 
 ## Tech Stack
