@@ -1,0 +1,29 @@
+services:
+
+  etl:
+    build: .
+    image: etl-cloud-pipeline:latest
+    container_name: etl_pipeline
+    env_file:
+      - .env
+    environment:
+      GOOGLE_APPLICATION_CREDENTIALS: /app/credentials/klucz_gcp.json
+    volumes:
+      - ./klucz_gcp.json:/app/credentials/klucz_gcp.json:ro
+      - ./raw_weather_logs.csv:/app/raw_weather_logs.csv:ro
+      - ./error_logs.csv:/app/error_logs.csv
+    command: python main.py
+
+  analytics:
+    image: etl-cloud-pipeline:latest
+    container_name: etl_analytics
+    env_file:
+      - .env
+    environment:
+      GOOGLE_APPLICATION_CREDENTIALS: /app/credentials/klucz_gcp.json
+    volumes:
+      - ./klucz_gcp.json:/app/credentials/klucz_gcp.json:ro
+      - ./weather_report.csv:/app/weather_report.csv
+    command: python analytics.py
+    depends_on:
+      - etl

@@ -5,22 +5,20 @@ import random
 from datetime import datetime, timedelta
 
 def generate_csv_data(filename="raw_weather_logs.csv", num_rows=10000):
-    print(f"Generowanie {num_rows} wierszy logów...")
+    print(f"Generating {num_rows} rows of logs...")
     
-    cities = ["Warszawa", "Krakow", "Wroclaw", "Gdansk", "Poznan", "Lodz", "Szczecin", "Lublin", None] # Dodajemy None dla błędnych danych
+    cities = ["Warszawa", "Krakow", "Wroclaw", "Gdansk", "Poznan", "Lodz", "Szczecin", "Lublin", None] 
     descriptions = ["słonecznie", "pochmurno", "deszczowo", "śnieg", "burza", "mgła"]
     
     data = []
     now = datetime.utcnow()
     
     for i in range(num_rows):
-        # Symulacja historycznych dat
-        time_offset = timedelta(minutes=random.randint(0, 43200)) # Ostatnie 30 dni
+        time_offset = timedelta(minutes=random.randint(0, 43200)) 
         record_time = now - time_offset
         
         city = random.choice(cities)
         
-        # 5% szansy na błędną temperaturę (string zamiast liczby lub absurdalna wartość)
         if random.random() < 0.05:
             temp = "brak_danych" if random.random() < 0.5 else random.uniform(100, 500)
         else:
@@ -39,7 +37,7 @@ def generate_csv_data(filename="raw_weather_logs.csv", num_rows=10000):
         
     df = pd.DataFrame(data)
     df.to_csv(filename, index=False)
-    print(f"Zapisano plik: {filename} z {len(df)} rekordami.")
+    print(f"Saved {len(df)} records to: {filename}")
 
 if __name__ == "__main__":
     generate_csv_data()
