@@ -32,19 +32,12 @@ A robust Data Engineering ETL (Extract, Transform, Load) pipeline implemented in
 > Prerequisites: Docker Desktop installed and running.
 
 ```bash
-# 1. Copy and fill in your GCP config
 cp .env.example .env
 
-# 2. Generate the dummy dataset
 python generate_data.py
-
-# 3. Build the image and run the full pipeline (ETL → Analytics)
 docker compose up --build
 
-# Run only the ETL step
 docker compose run etl
-
-# Run only the analytics/reporting step
 docker compose run analytics
 ```
 
@@ -53,18 +46,31 @@ Error logs are written back to `error_logs.csv` and the report to `weather_repor
 ### Option B — Local Python
 
 ```bash
-# 1. Install dependencies
 pip install -r requirements.txt
 
-# 2. Copy and fill in your GCP config
 cp .env.example .env
 
-# 3. Generate dummy data
 python generate_data.py
 
-# 4. Run ETL
 python main.py
-
-# 5. Run analytics
 python analytics.py
+```
+
+### Option C — Terraform (Infrastructure as Code)
+
+> Prerequisites: [Terraform](https://developer.hashicorp.com/terraform/install) installed.
+
+The `terraform/` directory manages all GCP resources (GCS bucket, BigQuery dataset and table).
+
+```bash
+cd terraform
+
+cp terraform.tfvars.example terraform.tfvars  
+terraform init                               
+
+terraform plan
+
+terraform apply
+
+terraform output
 ```
